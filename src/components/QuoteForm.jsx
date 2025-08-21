@@ -147,10 +147,34 @@ const QuoteForm = () => {
       }
       
       // Format devices data for email readability
-      const formatDevicesForEmail = (devices) => {
-        return devices.map((device, index) => {
-          let deviceText = `\n--- DEVICE ${index + 1} ---\n`;
-          deviceText += `Category: ${device.category}\n`;
+      const formatDevicesForEmail = (devices, contactInfo) => {
+        const emailHeader = `
+═══════════════════════════════════════════════════════════════
+                    ALLIED INSTRUMENTATION QUOTE REQUEST
+═══════════════════════════════════════════════════════════════
+
+CUSTOMER INFORMATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Name:     ${contactInfo.firstName} ${contactInfo.lastName}
+Email:    ${contactInfo.email}
+Company:  ${contactInfo.company}
+Date:     ${new Date().toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+
+QUOTE REQUEST DETAILS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Devices: ${devices.length}
+`;
+
+        const deviceDetails = devices.map((device, index) => {
+          let deviceText = `\n╔════════════════════════════════════════════════════════════════╗\n`;
+          deviceText += `║                          DEVICE ${index + 1}                           ║\n`;
+          deviceText += `╚════════════════════════════════════════════════════════════════╝\n`;
+          deviceText += `Category: ${device.category.toUpperCase()}\n`;
           
           if (device.category === 'instrumentation') {
             deviceText += `Type: ${device.instrumentationType}\n`;
@@ -198,6 +222,38 @@ const QuoteForm = () => {
           
           return deviceText;
         }).join('\n');
+
+        const emailFooter = `
+
+═══════════════════════════════════════════════════════════════
+                        NEXT STEPS
+═══════════════════════════════════════════════════════════════
+
+This quote request has been received and will be processed by our 
+technical sales team. You will receive a detailed quotation within 
+1-2 business days.
+
+For urgent requests, please contact us directly:
+Phone: (Your phone number)
+Email: quotes@alliedinst.com
+
+═══════════════════════════════════════════════════════════════
+                    ALLIED INSTRUMENTATION
+═══════════════════════════════════════════════════════════════
+
+Process Instrumentation • Heat Trace Solutions • Gas Detection
+Custom Solutions • Field Services • Technical Support
+
+Trusted by industry leaders across 24 states since 2021
+800+ years of collective experience • 20+ year average tenure
+
+Visit us: alliedinst.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This quote request was generated via our online quoting system.
+`;
+
+        return emailHeader + deviceDetails + emailFooter;
       };
       
       // Format data for Netlify submission
@@ -208,7 +264,12 @@ const QuoteForm = () => {
         'email': formData.email,
         'company': formData.company,
         'deviceCount': allDevices.length.toString(),
-        'devices': formatDevicesForEmail(allDevices)
+        'devices': formatDevicesForEmail(allDevices, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          company: formData.company
+        })
       };
       
       // Submit to Netlify

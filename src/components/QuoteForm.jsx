@@ -145,6 +145,59 @@ const QuoteForm = () => {
         allDevices.push(currentDevice);
       }
       
+      // Format devices data for email readability
+      const formatDevicesForEmail = (devices) => {
+        return devices.map((device, index) => {
+          let deviceText = `\n--- DEVICE ${index + 1} ---\n`;
+          deviceText += `Category: ${device.category}\n`;
+          
+          if (device.category === 'instrumentation') {
+            deviceText += `Type: ${device.instrumentationType}\n`;
+            if (device.instrumentationSubtype) {
+              deviceText += `Subtype: ${device.instrumentationSubtype}\n`;
+            }
+          } else if (device.category === 'valves') {
+            deviceText += `Valve Type: ${device.valveType}\n`;
+            if (device.valveStyle) deviceText += `Style: ${device.valveStyle}\n`;
+            if (device.actuation) deviceText += `Actuation: ${device.actuation}\n`;
+          }
+          
+          // Process conditions
+          if (device.flowRateNormal || device.pressureNormal || device.temperatureNormal) {
+            deviceText += `\nProcess Conditions:\n`;
+            if (device.flowRateNormal) deviceText += `  Flow: ${device.flowRateLow || '-'}/${device.flowRateNormal}/${device.flowRateMax || '-'} ${device.flowRateUnit}\n`;
+            if (device.pressureNormal) deviceText += `  Pressure: ${device.pressureLow || '-'}/${device.pressureNormal}/${device.pressureMax || '-'} ${device.pressureUnit}\n`;
+            if (device.temperatureNormal) deviceText += `  Temperature: ${device.temperatureLow || '-'}/${device.temperatureNormal}/${device.temperatureMax || '-'} ${device.temperatureUnit}\n`;
+            if (device.specificGravity) deviceText += `  Specific Gravity: ${device.specificGravity} ${device.specificGravityUnit}\n`;
+            if (device.viscosity) deviceText += `  Viscosity: ${device.viscosity} ${device.viscosityUnit}\n`;
+          }
+          
+          // Physical specs
+          if (device.lineSize || device.connectionType || device.materialConstruction) {
+            deviceText += `\nPhysical Specifications:\n`;
+            if (device.lineSize) deviceText += `  Line Size: ${device.lineSize}\n`;
+            if (device.connectionType) deviceText += `  Connection: ${device.connectionType}\n`;
+            if (device.pressureClass && device.connectionType === 'Flanged') deviceText += `  Pressure Class: ${device.pressureClass}\n`;
+            if (device.materialConstruction) deviceText += `  Material: ${device.materialConstruction}\n`;
+          }
+          
+          // Electrical requirements
+          if (device.electricalVoltageGeneral || device.electricalAreaClassification) {
+            deviceText += `\nElectrical Requirements:\n`;
+            if (device.electricalVoltageGeneral) deviceText += `  Voltage: ${device.electricalVoltageGeneral}\n`;
+            if (device.electricalAreaClassification) deviceText += `  Area Classification: ${device.electricalAreaClassification}\n`;
+            if (device.remoteRequired) deviceText += `  Remote Required: Yes\n`;
+            if (device.displayRequired) deviceText += `  Display Required: Yes\n`;
+          }
+          
+          // Additional notes
+          if (device.systemsNotes) deviceText += `\nSystems Notes: ${device.systemsNotes}\n`;
+          if (device.additionalNotes) deviceText += `\nAdditional Notes: ${device.additionalNotes}\n`;
+          
+          return deviceText;
+        }).join('\n');
+      };
+      
       // Format data for Netlify submission
       const formSubmissionData = {
         'form-name': 'quote-form',
@@ -153,7 +206,8 @@ const QuoteForm = () => {
         'email': formData.email,
         'company': formData.company,
         'deviceCount': allDevices.length.toString(),
-        'devices': JSON.stringify(allDevices)
+        'formattedDevices': formatDevicesForEmail(allDevices),
+        'devicesJSON': JSON.stringify(allDevices, null, 2)  // Keep JSON as backup
       };
       
       // Submit to Netlify

@@ -206,8 +206,7 @@ const QuoteForm = () => {
         'email': formData.email,
         'company': formData.company,
         'deviceCount': allDevices.length.toString(),
-        'formattedDevices': formatDevicesForEmail(allDevices),
-        'devicesJSON': JSON.stringify(allDevices, null, 2)  // Keep JSON as backup
+        'devices': formatDevicesForEmail(allDevices)
       };
       
       // Submit to Netlify

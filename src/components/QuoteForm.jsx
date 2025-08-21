@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 const QuoteForm = () => {
   const [devices, setDevices] = useState([]);
-  const [currentDeviceIndex, setCurrentDeviceIndex] = useState(0);
   
   const [formData, setFormData] = useState({
     // Contact Information
@@ -478,6 +477,8 @@ const QuoteForm = () => {
             className="card-body space-y-4"
           >
             <input type="hidden" name="form-name" value="quote-form" />
+            {/* Honeypot field for spam protection - hidden from users */}
+            <input type="text" name="bot-field" style={{ display: 'none' }} />
             {/* Hidden fields for Netlify form detection */}
             <input type="hidden" name="firstName" />
             <input type="hidden" name="lastName" />

@@ -171,9 +171,7 @@ Total Devices: ${devices.length}
 `;
 
         const deviceDetails = devices.map((device, index) => {
-          let deviceText = `\n╔════════════════════════════════════════════════════════════════╗\n`;
-          deviceText += `║                          DEVICE ${index + 1}                           ║\n`;
-          deviceText += `╚════════════════════════════════════════════════════════════════╝\n`;
+          let deviceText = `\n━━━━━━━━━━━━━━━━━━━ DEVICE ${index + 1} ━━━━━━━━━━━━━━━━━━━\n`;
           deviceText += `Category: ${device.category.toUpperCase()}\n`;
           
           if (device.category === 'instrumentation') {
@@ -225,32 +223,12 @@ Total Devices: ${devices.length}
 
         const emailFooter = `
 
-═══════════════════════════════════════════════════════════════
-                        NEXT STEPS
-═══════════════════════════════════════════════════════════════
-
-This quote request has been received and will be processed by our 
-technical sales team. You will receive a detailed quotation within 
-1-2 business days.
-
-For urgent requests, please contact us directly:
-Phone: (Your phone number)
-Email: quotes@alliedinst.com
-
-═══════════════════════════════════════════════════════════════
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                     ALLIED INSTRUMENTATION
-═══════════════════════════════════════════════════════════════
-
-Process Instrumentation • Heat Trace Solutions • Gas Detection
-Custom Solutions • Field Services • Technical Support
-
-Trusted by industry leaders across 24 states since 2021
-800+ years of collective experience • 20+ year average tenure
-
-Visit us: alliedinst.com
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This quote request was generated via our online quoting system.
+Generated: ${new Date().toLocaleString('en-US')}
+Source: Online Quote Form (alliedinst.com)
 `;
 
         return emailHeader + deviceDetails + emailFooter;

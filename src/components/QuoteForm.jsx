@@ -4,6 +4,9 @@ const QuoteForm = () => {
   const [devices, setDevices] = useState([]);
   
   const [formData, setFormData] = useState({
+    // Sales Rep Information
+    salesRep: '',
+    
     // Contact Information
     firstName: '',
     lastName: '',
@@ -149,29 +152,26 @@ const QuoteForm = () => {
       // Format devices data for email readability
       const formatDevicesForEmail = (devices, contactInfo) => {
         const emailHeader = `
-═══════════════════════════════════════════════════════════════
-                    ALLIED INSTRUMENTATION QUOTE REQUEST
-═══════════════════════════════════════════════════════════════
+=========================================
+    ALLIED INSTRUMENTATION QUOTE
+=========================================
 
-CUSTOMER INFORMATION:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Name:     ${contactInfo.firstName} ${contactInfo.lastName}
-Email:    ${contactInfo.email}
-Company:  ${contactInfo.company}
-Date:     ${new Date().toLocaleDateString('en-US', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}
+SALES REP: ${contactInfo.salesRep || 'Not specified'}
 
-QUOTE REQUEST DETAILS:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CUSTOMER:
+-----------------------------------------
+Name: ${contactInfo.firstName} ${contactInfo.lastName}
+Email: ${contactInfo.email}
+Company: ${contactInfo.company}
+Date: ${new Date().toLocaleDateString('en-US')}
+
+QUOTE DETAILS:
+-----------------------------------------
 Total Devices: ${devices.length}
 `;
 
         const deviceDetails = devices.map((device, index) => {
-          let deviceText = `\n━━━━━━━━━━━━━━━━━━━ DEVICE ${index + 1} ━━━━━━━━━━━━━━━━━━━\n`;
+          let deviceText = `\n--- DEVICE ${index + 1} ---\n`;
           deviceText += `Category: ${device.category.toUpperCase()}\n`;
           
           if (device.category === 'instrumentation') {
@@ -223,12 +223,11 @@ Total Devices: ${devices.length}
 
         const emailFooter = `
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                    ALLIED INSTRUMENTATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+-----------------------------------------
+ALLIED INSTRUMENTATION
+-----------------------------------------
 Generated: ${new Date().toLocaleString('en-US')}
-Source: Online Quote Form (alliedinst.com)
+Source: alliedinst.com quote form
 `;
 
         return emailHeader + deviceDetails + emailFooter;
@@ -237,12 +236,14 @@ Source: Online Quote Form (alliedinst.com)
       // Format data for Netlify submission
       const formSubmissionData = {
         'form-name': 'quote-form',
+        'salesRep': formData.salesRep,
         'firstName': formData.firstName,
         'lastName': formData.lastName,
         'email': formData.email,
         'company': formData.company,
         'deviceCount': allDevices.length.toString(),
         'devices': formatDevicesForEmail(allDevices, {
+          salesRep: formData.salesRep,
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
@@ -262,6 +263,7 @@ Source: Online Quote Form (alliedinst.com)
         // Reset form after successful submission
         setDevices([]);
         setFormData({
+          salesRep: formData.salesRep, // Keep sales rep when resetting
           firstName: '',
           lastName: '',
           email: '',
@@ -480,13 +482,14 @@ Source: Online Quote Form (alliedinst.com)
     }
     
     const deviceData = { ...formData };
-    // Don't include contact info in device data
-    const { firstName, lastName, email, company, ...deviceFields } = deviceData;
+    // Don't include contact info and sales rep in device data
+    const { salesRep, firstName, lastName, email, company, ...deviceFields } = deviceData;
     
     setDevices(prev => [...prev, { ...deviceFields, id: Date.now() }]);
     
-    // Reset device-specific fields but keep contact info
+    // Reset device-specific fields but keep contact info and sales rep
     setFormData(prev => ({
+      salesRep: prev.salesRep,
       firstName: prev.firstName,
       lastName: prev.lastName,
       email: prev.email,
@@ -575,6 +578,7 @@ Source: Online Quote Form (alliedinst.com)
             {/* Honeypot field for spam protection - hidden from users */}
             <input type="text" name="bot-field" style={{ display: 'none' }} />
             {/* Hidden fields for Netlify form detection */}
+            <input type="hidden" name="salesRep" />
             <input type="hidden" name="firstName" />
             <input type="hidden" name="lastName" />
             <input type="hidden" name="email" />
@@ -582,13 +586,38 @@ Source: Online Quote Form (alliedinst.com)
             <input type="hidden" name="deviceCount" />
             <input type="hidden" name="devices" />
             
+            {/* Sales Rep Information Section */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <span className="text-green-600 font-semibold text-sm">👤</span>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">Sales Representative</h3>
+              </div>
+              
+              <div>
+                <label htmlFor="salesRep" className="form-label">
+                  Sales Rep Name
+                </label>
+                <input
+                  type="text"
+                  id="salesRep"
+                  name="salesRep"
+                  value={formData.salesRep}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Enter sales rep name..."
+                />
+              </div>
+            </div>
+
             {/* Contact Information Section */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
                   <span className="text-primary-600 font-semibold text-sm">1</span>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-slate-900">Customer Information</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

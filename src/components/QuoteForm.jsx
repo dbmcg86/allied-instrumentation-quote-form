@@ -147,20 +147,21 @@ const QuoteForm = () => {
       }
       
       // Format data for Netlify submission
-      const formDataForSubmission = new FormData();
-      formDataForSubmission.append('form-name', 'quote-form');
-      formDataForSubmission.append('firstName', formData.firstName);
-      formDataForSubmission.append('lastName', formData.lastName);
-      formDataForSubmission.append('email', formData.email);
-      formDataForSubmission.append('company', formData.company);
-      formDataForSubmission.append('deviceCount', allDevices.length.toString());
-      formDataForSubmission.append('devices', JSON.stringify(allDevices));
+      const formSubmissionData = {
+        'form-name': 'quote-form',
+        'firstName': formData.firstName,
+        'lastName': formData.lastName,
+        'email': formData.email,
+        'company': formData.company,
+        'deviceCount': allDevices.length.toString(),
+        'devices': JSON.stringify(allDevices)
+      };
       
       // Submit to Netlify
       const response = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formDataForSubmission).toString()
+        body: new URLSearchParams(formSubmissionData).toString()
       });
       
       if (response.ok) {

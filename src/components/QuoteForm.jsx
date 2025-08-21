@@ -54,6 +54,7 @@ const QuoteForm = () => {
     airPressure: '',
     airFilterRegulator: false,
     valveStyle: '',
+    seatMaterial: '',
     lockoutBracket: '',
     
     // On/Off Valve Fields
@@ -159,6 +160,7 @@ const QuoteForm = () => {
           } else if (device.category === 'valves') {
             deviceText += `Valve Type: ${device.valveType}\n`;
             if (device.valveStyle) deviceText += `Style: ${device.valveStyle}\n`;
+            if (device.seatMaterial) deviceText += `Seat Material: ${device.seatMaterial}\n`;
             if (device.actuation) deviceText += `Actuation: ${device.actuation}\n`;
           }
           
@@ -254,6 +256,7 @@ const QuoteForm = () => {
           airPressure: '',
           airFilterRegulator: false,
           valveStyle: '',
+          seatMaterial: '',
           lockoutBracket: '',
           limitSwitch: '',
           solenoid: '',
@@ -857,6 +860,25 @@ const QuoteForm = () => {
                               {valveStyles.map((style) => (
                                 <option key={style} value={style}>{style}</option>
                               ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="form-label">Seat Material</label>
+                            <select
+                              name="seatMaterial"
+                              value={formData.seatMaterial}
+                              onChange={handleInputChange}
+                              className="form-input"
+                            >
+                              <option value="">Select seat material...</option>
+                              <option value="TFM (PTFE)">TFM (PTFE)</option>
+                              <option value="Stainless Steel">Stainless Steel</option>
+                              <option value="Stellite">Stellite</option>
+                              <option value="Inconel">Inconel</option>
+                              <option value="Hastelloy">Hastelloy</option>
+                              <option value="Tungsten Carbide">Tungsten Carbide</option>
+                              <option value="Other">Other</option>
                             </select>
                           </div>
                         </div>
